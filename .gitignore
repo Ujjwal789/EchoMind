@@ -14,3 +14,10 @@ piper/voices/
 *.onnx
 *.bin
 *.gguf
+
+venv/
+__pycache__/
+*.pyc
+uploads/
+user_data/
+

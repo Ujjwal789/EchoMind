@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - EchoMind AI</title>
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-dark: #4338ca;
+            --secondary: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --dark: #0f172a;
+            --card-bg: #1e293b;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --border-color: #334155;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        
+        .dashboard {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background-color: var(--card-bg);
+            padding: 30px;
+            border-right: 1px solid var(--border-color);
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .logo i {
+            font-size: 2rem;
+            color: var(--primary);
+        }
+        
+        .logo h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #4f46e5, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 20px;
+            background: rgba(79, 70, 229, 0.1);
+            border-radius: 12px;
+            margin-bottom: 30px;
+        }
+        
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+        
+        .user-details {
+            flex: 1;
+        }
+        
+        .username {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+        
+        .user-email {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+        
+        .nav-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 15px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+        
+        .nav-item:hover {
+            background: rgba(79, 70, 229, 0.1);
+            color: var(--text-primary);
+        }
+        
+        .nav-item.active {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .nav-item i {
+            width: 20px;
+            text-align: center;
+        }
+        
+        .sidebar-footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .logout-btn {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 15px;
+            color: var(--danger);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+        
+        .logout-btn:hover {
+            background: rgba(239, 68, 68, 0.1);
+        }
+        
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 30px;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .header h2 {
+            font-size: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .date-time {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+        
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .stat-card {
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 1px solid var(--border-color);
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border-color: var(--primary);
+        }
+        
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            color: white;
+        }
+        
+        .stat-info h3 {
+            font-size: 2rem;
+            margin-bottom: 5px;
+        }
+        
+        .stat-info p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        /* Quick Actions */
+        .quick-actions {
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 16px;
+            margin-bottom: 40px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .quick-actions h3 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+        }
+        
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .action-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            padding: 20px;
+            background: rgba(79, 70, 229, 0.1);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .action-btn:hover {
+            background: rgba(79, 70, 229, 0.2);
+            border-color: var(--primary);
+            transform: translateY(-3px);
+        }
+        
+        .action-btn i {
+            font-size: 2rem;
+            color: var(--primary);
+        }
+        
+        /* Recent Activity */
+        .recent-activity {
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .recent-activity h3 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+        }
+        
+        .activity-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 12px;
+            transition: background 0.3s;
+        }
+        
+        .activity-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(79, 70, 229, 0.2);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+        }
+        
+        .activity-details {
+            flex: 1;
+        }
+        
+        .activity-title {
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+        
+        .activity-time {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-secondary);
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: var(--border-color);
+        }
+        
+        /* AI Status */
+        .ai-status {
+            background: linear-gradient(135deg, rgba(79, 70, 229, 0.1), rgba(16, 185, 129, 0.1));
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-left: 4px solid var(--secondary);
+        }
+        
+        .ai-status i {
+            color: var(--secondary);
+            font-size: 1.2rem;
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                position: fixed;
+                z-index: 1000;
+                transition: transform 0.3s;
+            }
+            
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .actions-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <div class="logo">
+                <i class="fas fa-brain"></i>
+                <h1>EchoMind</h1>
+            </div>
+            
+            <!-- FIXED: current_user is now passed from Flask -->
+            <div class="user-info">
+                <div class="user-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="user-details">
+                    <div class="username">{{ current_user.username if current_user else 'User' }}</div>
+                    <div class="user-email">{{ current_user.email if current_user and current_user.email else 'No email' }}</div>
+                </div>
+            </div>
+            
+            <div class="ai-status" id="aiStatus">
+                <i class="fas fa-circle"></i>
+                <span>AI Status: Loading...</span>
+            </div>
+            
+            <nav class="nav-menu">
+                <a href="/dashboard" class="nav-item active">
+                    <i class="fas fa-home"></i> Dashboard
+                </a>
+                <a href="/chat" class="nav-item">
+                    <i class="fas fa-comments"></i> Chat
+                </a>
+                <a href="/voice" class="nav-item">
+                    <i class="fas fa-microphone"></i> Voice Assistant
+                </a>
+                <a href="/upload" class="nav-item">
+                    <i class="fas fa-upload"></i> File Upload
+                </a>
+                <a href="/profile" class="nav-item">
+                    <i class="fas fa-cog"></i> Settings
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <a href="/logout" class="logout-btn" onclick="return confirm('Are you sure you want to logout?')">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="header">
+                <h2>
+                    <i class="fas fa-chart-line"></i> Dashboard
+                </h2>
+                <div class="date-time" id="currentDateTime"></div>
+            </div>
+            
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>{{ conversations_count|default(0) }}</h3>
+                        <p>Total Conversations</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-file"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>{{ files_count|default(0) }}</h3>
+                        <p>Files Uploaded</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="uptime">-</h3>
+                        <p>Session Time</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-calendar"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="memberSince">-</h3>
+                        <p>Member Since</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <h3><i class="fas fa-bolt"></i> Quick Actions</h3>
+                <div class="actions-grid">
+                    <a href="/chat" class="action-btn">
+                        <i class="fas fa-comment"></i>
+                        <span>New Chat</span>
+                    </a>
+                    <a href="/voice" class="action-btn">
+                        <i class="fas fa-microphone"></i>
+                        <span>Voice Command</span>
+                    </a>
+                    <a href="/upload" class="action-btn">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <span>Upload File</span>
+                    </a>
+                    <a href="/chat" class="action-btn">
+                        <i class="fas fa-history"></i>
+                        <span>View History</span>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Recent Activity -->
+            <div class="recent-activity">
+                <h3><i class="fas fa-history"></i> Recent Activity</h3>
+                <div class="activity-list" id="recentActivity">
+                    <div class="empty-state">
+                        <i class="fas fa-clock"></i>
+                        <p>No recent activity</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Mobile Menu Toggle -->
+    <button class="menu-toggle" onclick="toggleSidebar()" style="display: none; position: fixed; bottom: 20px; right: 20px; background: var(--primary); color: white; border: none; width: 50px; height: 50px; border-radius: 50%; cursor: pointer; box-shadow: 0 5px 20px rgba(79, 70, 229, 0.4); z-index: 1001;">
+        <i class="fas fa-bars"></i>
+    </button>
+    
+    <script>
+        // Update date and time
+        function updateDateTime() {
+            const now = new Date();
+            const options = { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            };
+            document.getElementById('currentDateTime').textContent = now.toLocaleDateString('en-US', options);
+        }
+        
+        // Calculate session uptime
+        const sessionStart = new Date();
+        function updateUptime() {
+            const now = new Date();
+            const diff = Math.floor((now - sessionStart) / 1000);
+            const hours = Math.floor(diff / 3600);
+            const minutes = Math.floor((diff % 3600) / 60);
+            const seconds = diff % 60;
+            
+            document.getElementById('uptime').textContent = 
+                `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+        
+       
+        
+        // Check AI status
+        async function checkAIStatus() {
+            try {
+                const response = await fetch('/api/status');
+                const data = await response.json();
+                
+                const statusElement = document.querySelector('.ai-status');
+                const icon = statusElement.querySelector('i');
+                
+                if (data.ai_loaded) {
+                    icon.style.color = 'var(--secondary)';
+                    icon.className = 'fas fa-circle';
+                    statusElement.querySelector('span').textContent = 'AI Status: Online';
+                } else {
+                    icon.style.color = 'var(--warning)';
+                    icon.className = 'fas fa-circle';
+                    statusElement.querySelector('span').textContent = 'AI Status: Loading...';
+                }
+            } catch (error) {
+                console.error('Error checking AI status:', error);
+                const statusElement = document.querySelector('.ai-status');
+                statusElement.querySelector('span').textContent = 'AI Status: Offline';
+                statusElement.querySelector('i').style.color = 'var(--danger)';
+            }
+        }
+        
+        // Load recent activity
+        async function loadRecentActivity() {
+            try {
+                const response = await fetch('/api/conversation');
+                const conversations = await response.json();
+                
+                const activityList = document.getElementById('recentActivity');
+                
+                if (conversations && conversations.length > 0) {
+                    activityList.innerHTML = '';
+                    
+                    // Get last 5 conversations
+                    const recent = conversations.slice(-5).reverse();
+                    
+                    recent.forEach(conv => {
+                        const activityItem = document.createElement('div');
+                        activityItem.className = 'activity-item';
+                        
+                        const time = new Date(conv.timestamp);
+                        const timeString = time.toLocaleTimeString('en-US', {
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        });
+                        
+                        activityItem.innerHTML = `
+                            <div class="activity-icon">
+                                <i class="fas fa-comment"></i>
+                            </div>
+                            <div class="activity-details">
+                                <div class="activity-title">You: ${conv.user.substring(0, 50)}${conv.user.length > 50 ? '...' : ''}</div>
+                                <div class="activity-time">${time.toLocaleDateString()} at ${timeString}</div>
+                            </div>
+                        `;
+                        
+                        activityList.appendChild(activityItem);
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading activity:', error);
+            }
+        }
+        
+        // Toggle sidebar on mobile
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+        }
+        
+        // Check mobile view
+        function checkMobile() {
+            if (window.innerWidth <= 768) {
+                document.querySelector('.menu-toggle').style.display = 'flex';
+            } else {
+                document.querySelector('.menu-toggle').style.display = 'none';
+                document.getElementById('sidebar').classList.remove('active');
+            }
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            updateDateTime();
+            updateUptime();
+            checkAIStatus();
+            loadRecentActivity();
+            
+            // Update time every second
+            setInterval(updateDateTime, 1000);
+            setInterval(updateUptime, 1000);
+            setInterval(checkAIStatus, 5000);
+            setInterval(loadRecentActivity, 30000);
+            
+            // Check mobile on load and resize
+            checkMobile();
+            window.addEventListener('resize', checkMobile);
+        });
+    </script>
+</body>
+</html>
